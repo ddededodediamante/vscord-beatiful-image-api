@@ -19,6 +19,7 @@ app.get('/icon/:image', async (req, res) => {
     const imagePath = path.join(__dirname, 'icons', `${imageName}.png`);
 
     if (fs.existsSync(imagePath)) {
+        res.set('Content-Type', 'image/png');
         res.status(200).sendFile(imagePath);
     } else {
         try {
