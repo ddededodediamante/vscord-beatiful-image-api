@@ -3,6 +3,8 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const sharp = require('sharp');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -26,9 +28,12 @@ app.get('/icon/:image', async (req, res) => {
             const fallbackImageUrl = `${fallbackUrl}${imageName}.png`;
             const response = await axios.get(fallbackImageUrl, { responseType: 'arraybuffer' });
 
-            res.set('Content-Type', 'image/png');
-            res.status(200).send(response.data);
-            console.log(fallbackImageUrl)
+            const compressedImage = await sharp(response.data)
+                .jpeg({ quality: 20 }) 
+                .toBuffer();
+
+            res.set('Content-Type', 'image/jpeg');
+            res.status(200).send(compressedImage);
         } catch (error) {
             console.error(error);
             res.status(500).send(String(error));
