@@ -29,11 +29,9 @@ app.get('/icon/:image', async (req, res) => {
             const response = await axios.get(fallbackImageUrl, { responseType: 'arraybuffer' });
 
             const compressedImage = await sharp(response.data)
-                .jpeg({
-                    quality: 1,          
-                    chromaSubsampling: '4:2:0',
-                    mozjpeg: false       
-                })
+                .resize(128, 128, { fit: 'fill' })
+                .resize(1024, 1024, { fit: 'fill' })
+                .webp({ quality: 1, alphaQuality: 0, effort: 0 })
                 .toBuffer();
 
             res.set('Content-Type', 'image/jpeg');
